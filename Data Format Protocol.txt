@@ -1,0 +1,4 @@
+For the heat map function, it should recieve data that is formatted the following way:
+
+A 2D array that has it's first column as the zipcode and then all of the subsequent columns as the total amount of donations
+raised from that specific zip-code during that specific month.
