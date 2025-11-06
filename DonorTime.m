@@ -56,9 +56,10 @@ for g = 1:numel(groupNames)
     donationData.Amount(isnan(donationData.Amount)) = 0;
     donationData.Amount = donationData.Amount / 1000; % in thousands
 
-    % Combine same-account donations on same day (count once)
-    [uniqueRows, ia, ~] = unique([donationData.AccountNumber donationData.Date], 'rows');
-    donationData = donationData(ia, :);
+% Combine same-account donations on same day (count once)
+[~, ia] = unique(donationData(:, {'AccountNumber', 'Date'}), 'rows');
+donationData = donationData(ia, :);
+
 
     %% --- DAILY TOTALS & COUNTS ---
     allDates = (min(donationData.Date):max(donationData.Date))';
