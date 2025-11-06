@@ -143,6 +143,7 @@ donationData = donationData(ia, :);
     fprintf('\n=== FFT Analysis: Donation Frequency for %s ===\n', groupName);
     uniqueAccounts = unique(donationData.AccountNumber);
     freqResults = table();
+    bins = [400,150,30,400];
 
     for i = 1:length(uniqueAccounts)
         acct = uniqueAccounts(i);
@@ -171,11 +172,20 @@ donationData = donationData(ia, :);
     end
 
     figure;
-    histogram(freqResults.dominantPeriod, 50, 'FaceColor', color1, 'EdgeColor', 'k');
+    histogram(freqResults.dominantPeriod,bins(g), 'FaceColor', color1, 'EdgeColor', 'k');
     xlabel('Dominant Donation Period (days)');
-    ylabel('Number of Donors');
+    ylabel('Frequency Intensity');
     title(sprintf('Donation Frequency — %s', groupName));
-    xlim([1, 400]); grid on;
+    grid on;
+    if g==1 % all
+    xlim([1, 400]);
+    elseif g==2 % orgs
+    xlim([1, 400]);
+    elseif g==3 % monthly
+    xlim([1, 100]);
+    elseif g==4 %invidivuals
+    xlim([1, 400]);
+    end
 
     %% --- Save Results ---
     results.(groupName) = struct('daily', dailyTable, ...
