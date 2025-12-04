@@ -143,7 +143,7 @@ donationData = donationData(ia, :);
     fprintf('\n=== FFT Analysis: Donation Frequency for %s ===\n', groupName);
     uniqueAccounts = unique(donationData.AccountNumber);
     freqResults = table();
-    bins = [400,150,30,400];
+    bins = [400,300,30,400];
 
     for i = 1:length(uniqueAccounts)
         acct = uniqueAccounts(i);
@@ -201,16 +201,21 @@ fprintf('\n=== All subgroup analyses complete! ===\n');
 % =========================================================
 compareGroups = fieldnames(results);
 
-% --- Compare total donation trends ---
+% --- Compare average monthly donations (subplot version, varying axis) ---
 figure;
-hold on;
+tiledlayout(2,2);
 for g = 1:numel(compareGroups)
-    d = results.(compareGroups{g}).daily;
-    plot(d.Date, d.TotalAmount, 'DisplayName', compareGroups{g}, 'LineWidth', 1.2);
+    nexttile;
+    d = results.(compareGroups{g}).avgMonth;
+    bar(d.MonthOfYear, d.mean_TotalAmount, 'FaceColor', gemColors(mod(g, size(gemColors,1))+1,:), 'EdgeColor', 'k');
+    if g==3 
+        ylim([0,0.08]);
+    end
+    title(compareGroups{g}); ylabel('Avg Daily Donations (Thousands $)');
+    xtickangle(45); grid on;
 end
-xlabel('Date'); ylabel('Total Amount (Thousands of $)');
-title('Comparison of Total Donations Over Time');
-legend; grid on;
+sgtitle('Average Monthly Donations — All Groups - Variable Axis');
+
 
 % --- Compare average monthly donations (subplot version) ---
 figure;
@@ -219,19 +224,18 @@ for g = 1:numel(compareGroups)
     nexttile;
     d = results.(compareGroups{g}).avgMonth;
     bar(d.MonthOfYear, d.mean_TotalAmount, 'FaceColor', gemColors(mod(g, size(gemColors,1))+1,:), 'EdgeColor', 'k');
+        ylim([0,2.5]);
     title(compareGroups{g}); ylabel('Avg Daily Donations (Thousands $)');
     xtickangle(45); grid on;
 end
-sgtitle('Average Monthly Donations — All Groups');
-
-% --- Overlaid monthly donations comparison ---
-figure;
-hold on;
-for g = 1:numel(compareGroups)
-    d = results.(compareGroups{g}).avgMonth;
-    plot(double(d.MonthOfYear), d.mean_TotalAmount, 'LineWidth', 1.5, ...
-        'DisplayName', compareGroups{g});
-end
-xlabel('Month'); ylabel('Average Daily Donations (Thousands $)');
-title('Overlaid Monthly Donation Comparison');
-legend; grid on;
+sgtitle('Average Monthly Donations — All Groups - Static Axis');
+%% Save figures
+% figHandles = findall(0, 'Type', 'figure');
+% filepath = "C:\Users\willb\OneDrive - Washington University in St. Louis\. Engineers in The Community\Figures";
+% for n = 1:length(figHandles)
+%     fh = figHandles(n);
+%     figure(fh);
+%     filename = fullfile(filepath, sprintf('figure_%d.jpg', n));
+%     exportgraphics(fh, filename, 'Resolution', 300);
+%     disp('fig saved')
+% end
